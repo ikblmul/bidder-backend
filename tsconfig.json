@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+      "outDir": "./dist",
+      "module": "commonjs",
+      "esModuleInterop": true,
+      "target": "es2016",
+      "noImplicitAny": true,
+      "moduleResolution": "node",
+      "sourceMap": true,
+      "removeComments": true,
+      "preserveConstEnums": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames" : true,
+      "experimentalDecorators" : true
+  
+      // rest options remain same
+    },
+
+  "typeRoots": ["./global.d.ts", "./node_modules/@types"],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+  }
+  

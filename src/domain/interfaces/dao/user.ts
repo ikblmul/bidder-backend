@@ -1,5 +1,10 @@
 import { ID, NotFound, SomethingWrong } from "../types";
-import { PaginateResult, paginateParameter, sortSpecs } from "./helper";
+import {
+  PaginateResult,
+  PaginateParameter,
+  SortSpecs,
+  ErrorResult,
+} from "./helper";
 
 export interface UserOutput {
   id: ID;
@@ -17,16 +22,17 @@ export interface UserInput {
 
 // Repositories Contract
 
-interface UserParam extends sortSpecs {
+interface UserParam extends SortSpecs {
   username: string;
 }
 
 export interface UserRepository {
   getById(id: ID): Promise<UserOutput | NotFound>;
-  getByUsername(username: UserParam): Promise<UserOutput | NotFound>;
-  getAll(): Promise<UserOutput[]>;
+  getByUsername(username: string): Promise<UserOutput | NotFound>;
+  getAll(payload: UserParam): Promise<UserOutput[]>;
   updateById(id: ID, payload: UserInput): Promise<UserOutput | NotFound>;
   store(payload: UserInput): Promise<UserOutput | SomethingWrong>;
+  hasUniqueUsername(username: string, id: ID): Promise<boolean>;
 }
 
 // Usercases Contract
@@ -37,10 +43,10 @@ export interface UserUsecase {
     payload: Omit<UserInput, "fullname">
   ): Promise<UserOutput | NotFound>;
   getWithPaginate(
-    payload: paginateParameter
+    payload: PaginateParameter
   ): Promise<PaginateResult<Omit<UserOutput, "password">>>;
-  create(payload: UserInput): Promise<UserOutput>;
-  updateById(id: ID, payload: UserInput): Promise<UserOutput>;
+  create(payload: UserInput): Promise<UserOutput | ErrorResult>;
+  updateById(id: ID, payload: UserInput): Promise<UserOutput | ErrorResult>;
   deleteById(id: ID): Promise<UserOutput>;
   deleteBulk(ids: ID[]): Promise<boolean>;
 }

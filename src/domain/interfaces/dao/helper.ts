@@ -16,3 +16,7 @@ export interface PaginateResult<T> {
   filterTotal: number;
   data: T[];
 }
+
+export interface ErrorResult {
+  message: string;
+}

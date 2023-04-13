@@ -1,7 +1,7 @@
 import { DataSource, Repository } from "typeorm";
 import { UserInput, UserOutput, UserRepository } from "../interfaces/dao/user";
 import { User } from "../orm/typeorm/user";
-import { ID } from "../interfaces/types";
+import { ID, NotFound } from "../interfaces/types";
 
 class UserRepositoryImpl implements UserRepository {
   private ormRepo: Repository<User>;
@@ -14,7 +14,7 @@ class UserRepositoryImpl implements UserRepository {
     return (await this.ormRepo.find({})) as UserOutput[];
   }
 
-  async getById(id: ID): Promise<boolean | UserOutput> {
+  async getById(id: ID): Promise<NotFound | UserOutput> {
     return await this.ormRepo.findOne({
       where: {
         id,
@@ -22,7 +22,7 @@ class UserRepositoryImpl implements UserRepository {
     });
   }
 
-  async getByUsername(username: string): Promise<boolean | UserOutput> {
+  async getByUsername(username: string): Promise<NotFound | UserOutput> {
     return await this.ormRepo.findOne({
       where: {
         username,
@@ -33,24 +33,13 @@ class UserRepositoryImpl implements UserRepository {
   async updateById(
     id: number,
     { username, password, fullname }: UserInput
-  ): Promise<boolean | UserOutput> {
-    const update = this.ormRepo.update(id, {
+  ): Promise<NotFound | UserOutput> {
+    const update = await this.ormRepo.update(id, {
       username,
       password,
       fullname,
     });
-
-    let res;
-
-    update
-      .then((d) => {
-        res = Promise.resolve({});
-      })
-      .catch(() => {
-        res = Promise.resolve(false);
-      });
-
-    return res;
+    return update.raw?.[0];
   }
 
   async store({

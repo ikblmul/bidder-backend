@@ -11,7 +11,9 @@
       "preserveConstEnums": true,
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames" : true,
-      "experimentalDecorators" : true
+      "experimentalDecorators" : true,
+      "strict": true
+
   
       // rest options remain same
     },

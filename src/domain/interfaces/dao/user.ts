@@ -4,6 +4,7 @@ import {
   PaginateParameter,
   SortSpecs,
   ErrorResult,
+  PaginateSort,
 } from "./helper";
 
 export interface UserOutput {
@@ -20,16 +21,19 @@ export interface UserInput {
   fullname: string;
 }
 
+export type UserInputWithoutPass = Omit<UserOutput, "password">;
+
 // Repositories Contract
 
-interface UserParam extends SortSpecs {
+export interface UserParam extends PaginateSort {
   username: string;
 }
 
+export type UserParamAll = Partial<UserParam>;
 export interface UserRepository {
   getById(id: ID): Promise<UserOutput | NotFound>;
   getByUsername(username: string): Promise<UserOutput | NotFound>;
-  getAll(payload: UserParam): Promise<UserOutput[]>;
+  getAll(payload: UserParamAll): Promise<UserOutput[]>;
   updateById(id: ID, payload: UserInput): Promise<UserOutput | NotFound>;
   store(payload: UserInput): Promise<UserOutput | SomethingWrong>;
   hasUniqueUsername(username: string, id: ID): Promise<boolean>;
@@ -44,7 +48,7 @@ export interface UserUsecase {
   ): Promise<UserOutput | NotFound>;
   getWithPaginate(
     payload: PaginateParameter
-  ): Promise<PaginateResult<Omit<UserOutput, "password">>>;
+  ): Promise<PaginateResult<UserInputWithoutPass>>;
   create(payload: UserInput): Promise<UserOutput | ErrorResult>;
   updateById(id: ID, payload: UserInput): Promise<UserOutput | ErrorResult>;
   deleteById(id: ID): Promise<UserOutput>;

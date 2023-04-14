@@ -1,10 +1,15 @@
 import {
   UserInput,
+  UserInputWithoutPass,
   UserOutput,
   UserRepository,
 } from "./../interfaces/dao/user";
 import { UserUsecase } from "../interfaces/dao/user";
-import { ErrorResult } from "../interfaces/dao/helper";
+import {
+  ErrorResult,
+  PaginateParameter,
+  PaginateResult,
+} from "../interfaces/dao/helper";
 import { userValdation } from "../validate/user-validate";
 
 class userUsercasesImpl implements UserUsecase {
@@ -50,4 +55,8 @@ class userUsercasesImpl implements UserUsecase {
 
     return userUpdate as UserOutput;
   }
+
+  async getWithPaginate(
+    payload: PaginateParameter
+  ): Promise<PaginateResult<UserInputWithoutPass>> {}
 }

@@ -1,8 +1,7 @@
-export interface SortSpecs {
+export interface PaginateSort {
   limit: number;
   skip: number;
 }
-
 export interface PaginateParameter {
   limit: number;
   page: number;

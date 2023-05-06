@@ -1,25 +1,43 @@
 {
     "compilerOptions": {
-      "outDir": "./dist",
-      "module": "commonjs",
-      "esModuleInterop": true,
-      "target": "es2016",
-      "noImplicitAny": true,
-      "moduleResolution": "node",
-      "sourceMap": true,
-      "removeComments": true,
-      "preserveConstEnums": true,
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames" : true,
-      "experimentalDecorators" : true,
-      "strict": true
-
-  
-      // rest options remain same
+        "outDir": "./dist",
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "target": "es2016",
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames" : true,
+        "experimentalDecorators" : true,
+        "strict": true,
+        "strictPropertyInitialization": false,
+        "emitDecoratorMetadata" : true,
     },
 
   "typeRoots": ["./global.d.ts", "./node_modules/@types"],
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "exclude": ["node_modules", "**/*.spec.ts"],
+  "ts-node": {  
+    "files": true, 
+    "transpileOnly": true,
+    "compilerOptions": {
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "target": "es2016",
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "preserveConstEnums": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames" : true,
+        "experimentalDecorators" : true,
+        "strict": true,
+        "strictPropertyInitialization": false,
+        "emitDecoratorMetadata": true
+    }
+  }, // add this
   }
   

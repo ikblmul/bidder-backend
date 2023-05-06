@@ -1,19 +1,31 @@
-import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
+// import dot env first time
+require("dotenv").config();
+
+// console.log(process.env);
+
+import express, { Express } from "express";
 import CreateSqlConnection from "./data-sources/impl/data-source-mysql";
 import config from "./infrastructure/config/config";
+import bootstrap from "./bootstrap";
 
-dotenv.config();
-
+// Initianting All Dependencies connection
 const app: Express = express();
 const port = process.env.PORT || 8000;
 
-// Database Connection
+const mysqlConnection = CreateSqlConnection({
+  db: config.database.name,
+  username: config.database.username as string,
+  password: config.database.password as string,
+  host: config.database.host,
+  port: config.database.port,
+});
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
+bootstrap({
+  appExpress: app,
+  sqlDatasource: mysqlConnection,
 });
 
 app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+  console.log(`Listening on port ${port}`);
 });

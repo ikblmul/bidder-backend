@@ -18,4 +18,9 @@ export interface PaginateResult<T> {
 
 export interface ErrorResult {
   message: string;
+  error: string;
 }
+
+export type TypeOfClassMethod<T, M extends keyof T> = T[M] extends Function
+  ? T[M]
+  : never;

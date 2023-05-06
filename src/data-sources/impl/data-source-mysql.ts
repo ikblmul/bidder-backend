@@ -8,6 +8,7 @@ const CreateSqlConnection = ({
   port,
   username,
 }: SqlConnectionContract): DataSource => {
+  console.log(__dirname + "/../orm/typeorm/**/*.entity.{js,ts}");
   const AppDataSource = new DataSource({
     type: "mysql",
     host,
@@ -17,6 +18,7 @@ const CreateSqlConnection = ({
     database: db,
     synchronize: false,
     logging: true,
+    entities: [__dirname + "/../orm/typeorm/*.{js,ts}"],
   });
 
   AppDataSource.initialize()

@@ -1,4 +1,9 @@
-import { DataSource, FindManyOptions, Repository } from "typeorm";
+import {
+  DataSource,
+  FindManyOptions,
+  FindOptionsSelect,
+  Repository,
+} from "typeorm";
 import {
   UserInput,
   UserOutput,
@@ -6,7 +11,7 @@ import {
   UserParamAll,
   UserRepository,
 } from "../interfaces/dao/user";
-import { User } from "../orm/typeorm/user";
+import { User } from "../../data-sources/orm/typeorm/user";
 import { ID, NotFound } from "../interfaces/types";
 
 class UserRepositoryImpl implements UserRepository {
@@ -16,25 +21,20 @@ class UserRepositoryImpl implements UserRepository {
     this.ormRepo = dataSource.getRepository(User);
   }
 
-  async getAll(payload: UserParamAll): Promise<UserOutput[]> {
+  async getAll(payload: UserParamAll = {}): Promise<UserOutput[]> {
     let param: FindManyOptions<User> = {};
 
     payload.skip && (param.skip = payload.skip);
 
-    payload.limit && (param.skip = payload.limit);
+    payload.limit && (param.take = payload.limit);
 
     payload.username && (param.where = { fullname: payload.username });
 
+    payload.keyOnly &&
+      (param.select = payload.keyOnly as FindOptionsSelect<User>);
+
     return (await this.ormRepo.find(param)) as UserOutput[];
   }
-
-  // async getAll(payload: UserParam): Promise<UserOutput[]> {
-
-  //   return (await this.ormRepo.find({
-  //     skip : payload.skip,
-  //     take : payload.limit,
-  //   })) as UserOutput[];
-  // }
 
   // // async getAll(): Promise<UserOutput[]> {
   //   return (await this.ormRepo.find({})) as UserOutput[];
@@ -77,6 +77,15 @@ class UserRepositoryImpl implements UserRepository {
       fullname,
       username,
       password,
+    });
+  }
+
+  hasUniqueUsername(username: string, id: number): Promise<boolean> {
+    return this.ormRepo.exist({
+      where: {
+        username,
+        id,
+      },
     });
   }
 }

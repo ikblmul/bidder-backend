@@ -2,7 +2,6 @@ import { ID, NotFound, SomethingWrong } from "../types";
 import {
   PaginateResult,
   PaginateParameter,
-  SortSpecs,
   ErrorResult,
   PaginateSort,
 } from "./helper";
@@ -25,15 +24,18 @@ export type UserInputWithoutPass = Omit<UserOutput, "password">;
 
 // Repositories Contract
 
-export interface UserParam extends PaginateSort {
-  username: string;
+export interface UserParam {
+  username?: string;
 }
 
-export type UserParamAll = Partial<UserParam>;
+export type UserParamAll = Partial<
+  UserParam & PaginateSort & { keyOnly: (keyof UserOutput)[] }
+>;
+export type UserParamUsecase = UserParam & PaginateParameter;
 export interface UserRepository {
   getById(id: ID): Promise<UserOutput | NotFound>;
   getByUsername(username: string): Promise<UserOutput | NotFound>;
-  getAll(payload: UserParamAll): Promise<UserOutput[]>;
+  getAll(payload?: UserParamAll): Promise<UserOutput[]>;
   updateById(id: ID, payload: UserInput): Promise<UserOutput | NotFound>;
   store(payload: UserInput): Promise<UserOutput | SomethingWrong>;
   hasUniqueUsername(username: string, id: ID): Promise<boolean>;
@@ -42,12 +44,12 @@ export interface UserRepository {
 // Usercases Contract
 
 export interface UserUsecase {
-  getById(id: ID): Promise<UserOutput | NotFound>;
+  getById(id: ID): Promise<UserOutput | ErrorResult>;
   authtenicate(
     payload: Omit<UserInput, "fullname">
-  ): Promise<UserOutput | NotFound>;
+  ): Promise<UserOutput | ErrorResult>;
   getWithPaginate(
-    payload: PaginateParameter
+    payload: UserParamUsecase
   ): Promise<PaginateResult<UserInputWithoutPass>>;
   create(payload: UserInput): Promise<UserOutput | ErrorResult>;
   updateById(id: ID, payload: UserInput): Promise<UserOutput | ErrorResult>;

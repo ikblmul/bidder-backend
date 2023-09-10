@@ -16,10 +16,23 @@ export interface PaginateResult<T> {
   data: T[];
 }
 
-export interface ErrorResult {
-  message: string;
-  error: string;
+export interface Result<T> {
+  message: T;
+  status: string;
+  tags?: string[];
 }
+
+export interface MessageString {
+  message: string;
+}
+
+export interface ObjectString<T> {
+  [key: string]: T;
+}
+
+export type ErrorResult = Result<string>;
+
+export type ResultData<T> = Result<T> | ErrorResult;
 
 export type TypeOfClassMethod<T, M extends keyof T> = T[M] extends Function
   ? T[M]

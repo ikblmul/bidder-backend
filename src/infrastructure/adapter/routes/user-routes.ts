@@ -8,6 +8,13 @@ const UserRoutes = (ctrlFactory: CtrlParamRouter<UserController>) => {
   // console.log("senderhana", controller);
 
   route.get("/", ctrlFactory.action("getAll"));
+  route.get("/:id", ctrlFactory.action("getById"));
+  route.post("/", ctrlFactory.action("store"));
+  route.put("/:id", ctrlFactory.action("update"));
+  route.delete("/:id", ctrlFactory.action("remove"));
+  // route.post("/", (req, res) => {
+  //   console.log(req.body);
+  // });
 
   return route;
 };

@@ -1,4 +1,9 @@
+import { ResultType } from "../../domain/interfaces/types";
+
 const config = {
+  app: {
+    port: process.env.APP_PORT,
+  },
   database: {
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
@@ -6,7 +11,10 @@ const config = {
     host: process.env.DB_HOST || "localhost",
     port: (process.env.DB_PORT || 3306) as number,
   },
-
+  debug: {
+    enable: true,
+    filters_console: [ResultType.SUCCESS], // filter when debug on then console start to debug specific status
+  },
   salt: process.env.HASH_SALT || "poiajsoidaloisfhnosenfoinhsoif",
 };
 

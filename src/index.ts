@@ -11,7 +11,7 @@ import bootstrap from "./bootstrap";
 
 // Initianting All Dependencies connection
 const app: Express = express();
-const port = process.env.PORT || 8000;
+const port = config.app.port || 8000;
 
 const mysqlConnection = CreateSqlConnection({
   db: config.database.name,

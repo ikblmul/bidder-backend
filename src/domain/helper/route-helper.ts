@@ -8,6 +8,7 @@ export const AdapterCtrl = <T extends unknown>(controller: T) => {
   return {
     action: (method: keyof T) => {
       return (req: Request, res: Response) => {
+        console.log(req.body);
         // @ts-ignore
         controller[method].call(controller, req, res);
       };

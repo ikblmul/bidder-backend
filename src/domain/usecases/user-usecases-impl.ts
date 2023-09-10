@@ -1,3 +1,5 @@
+import { ProfileRepository } from "./../interfaces/dao/profile";
+import { successResult, errorResult, validateResult } from "./../helper/result-data-helper";
 import {
   UserInput,
   UserInputWithoutPass,
@@ -7,52 +9,46 @@ import {
   UserRepository,
 } from "./../interfaces/dao/user";
 import { UserUsecase } from "../interfaces/dao/user";
-import {
-  ErrorResult,
-  PaginateParameter,
-  PaginateResult,
-} from "../interfaces/dao/helper";
+import { MessageString, PaginateResult, ResultData } from "../interfaces/dao/helper";
 import { userValdation } from "../validate/user-validate";
 import paginateHelper from "../helper/paginate";
 import { userAuthenticateValidation } from "../validate/user-validate";
 import { makeHash, verifyHash } from "../helper/hash";
-import { errorResult } from "../helper/error";
+import { UUID_ID } from "../interfaces/types";
+import zodErrorHandler from "../helper/zodError";
 
 class UserUsercasesImpl implements UserUsecase {
-  constructor(public userRepository: UserRepository) {}
+  constructor(public userRepository: UserRepository, public profileRepository: ProfileRepository) {}
 
-  async authtenicate(
-    payload: Omit<UserInput, "fullname">
-  ): Promise<UserOutput | ErrorResult> {
+  async authtenicate(payload: Omit<UserInput, "fullname">): Promise<ResultData<UserOutput>> {
     const validation = userAuthenticateValidation().safeParse(payload);
 
-    if (!validation.success)
-      return errorResult(validation.error.message, "validation");
+    if (!validation.success) return validateResult(zodErrorHandler(validation.error));
 
-    const user = await this.userRepository.getByUsername(
-      validation.data.username
-    );
+    const user = await this.userRepository.getByUsername(validation.data.username);
 
     // check if username not Exists
-    if (!user) return errorResult("Username Not Found", "validation");
+    if (!user) return validateResult("Username Not Found");
 
     if (!(await verifyHash(user.password, payload.password)))
-      return errorResult("password doesn't match", "validation");
+      return validateResult("password doesn't match");
 
-    return user;
+    return successResult(user as UserOutput);
   }
 
-  async create(payload: UserInput): Promise<UserOutput | ErrorResult> {
+  async create(payload: UserInput): Promise<ResultData<UserOutput>> {
     const validation = userValdation().safeParse(payload);
 
-    if (!validation.success) return errorResult(validation.error.message);
+    if (!validation.success) return validateResult(zodErrorHandler(validation.error));
 
-    // check if username not Exists
-    if (!(await this.userRepository.getByUsername(validation.data.username)))
-      return errorResult(
-        "what da heil is your insert ?, is in database alredy pick another username",
-        "validation"
-      );
+    // check if username or email exists not Exists
+    if (
+      await this.userRepository.hasUniqueToOther({
+        username: validation.data.username,
+        email: validation.data.email,
+      })
+    )
+      return validateResult("the username or email has exists please try new one");
 
     // hashing password
     const hash = await makeHash(validation.data.password);
@@ -61,72 +57,84 @@ class UserUsercasesImpl implements UserUsecase {
 
     validation.data.password = hash.password as string;
 
-    // store
+    // store user information
     const userStore = await this.userRepository.store(validation.data);
+
+    console.log(userStore);
 
     if (!userStore) return errorResult("something when wrong with store user");
 
-    return userStore as UserOutput;
+    console.log(userStore.id);
+    // store profile information
+    await this.profileRepository.assignToEmptyProfile(userStore.id);
+
+    // send confirmation
+    return successResult(userStore as UserOutput);
   }
 
-  async updateById(
-    id: number,
-    payload: UserInput
-  ): Promise<UserOutput | ErrorResult> {
+  async updateById(id: UUID_ID, payload: UserInput): Promise<ResultData<MessageString>> {
     const validation = userValdation().safeParse(payload);
 
-    if (!validation.success)
-      return errorResult(validation.error.message, "validation");
+    if (!validation.success) return validateResult(validation.error.message);
 
     if (!(await this.userRepository.hasUniqueUsername(payload.username, id)))
       return errorResult(
         "what da heil is your insert ?, is in database alredy pick another username"
       );
 
-    const userUpdate = await this.userRepository.updateById(
-      id,
-      validation.data
-    );
+    const userUpdate = await this.userRepository.updateById(id, validation.data);
 
-    return userUpdate as UserOutput;
+    if (!userUpdate) errorResult("Something went wrong when update data");
+
+    return successResult({ message: "success update data" });
   }
 
   async getWithPaginate({
     limit,
     page,
     username,
-  }: UserParamUsecase): Promise<PaginateResult<UserInputWithoutPass>> {
-    // Default Limit is 10
-
+  }: UserParamUsecase): Promise<ResultData<PaginateResult<UserInputWithoutPass>>> {
     let param: UserParamAll = {
       limit: limit,
-      skip: limit * page,
-      keyOnly: ["id", "fullname", "username"],
+      skip: limit * (page <= 1 ? 0 : page),
+      keyOnly: ["id", "username", "createdAt", "updatedAt", "email"],
     };
-
-    console.log(param);
 
     username && (param.username = username);
 
-    return paginateHelper<UserInputWithoutPass>({
-      data: (await this.userRepository.getAll(param)) as UserInputWithoutPass[],
-      total: 0,
-      filterTotal: 9,
-      limit,
-      page,
-    });
+    return successResult(
+      paginateHelper<UserInputWithoutPass>({
+        data: (await this.userRepository.getAll(param)) as UserInputWithoutPass[],
+        filterTotal: await this.userRepository.count(param),
+        total: -1,
+        limit,
+        page,
+      })
+    );
   }
 
-  async deleteBulk(ids: number[]): Promise<boolean> {
+  async deleteBulk(ids: UUID_ID[]): Promise<boolean> {
     return false;
   }
 
-  async getById(id: number): Promise<UserOutput | ErrorResult> {
-    return errorResult("Not Implemented");
+  async getById(id: UUID_ID): Promise<ResultData<UserOutput>> {
+    // convert type to partial causing delete password
+    const user = ((await this.userRepository.getById(id)) as Partial<UserOutput>) || null;
+
+    if (!user) return errorResult("User Not Found");
+
+    delete user.password;
+
+    return successResult<UserOutput>(user as unknown as UserOutput);
+
+    // return errorResult("Not Implemented");
   }
 
-  async deleteById(id: number): Promise<UserOutput> {
-    return {} as UserOutput;
+  async deleteById(id: UUID_ID): Promise<ResultData<MessageString>> {
+    if (await this.userRepository.deleteById(id))
+      return errorResult("there was error when deleting user");
+
+    return successResult({ message: "Delete Successfully" });
   }
 }
 

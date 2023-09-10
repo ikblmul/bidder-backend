@@ -11,13 +11,15 @@ export const userAuthenticateValidation = () => {
 export const userValdation = () => {
   return z.object({
     username: z.string().min(6),
+
+    email: z.string().min(6).email(),
     password: z
       .string()
       .min(6)
-      .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])$/, {
-        message:
-          "Password at least contain one uppercase, number, and one special character",
+      .regex(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, {
+        message: "Password at least contain one uppercase, number, and one special character",
       }),
-    fullname: z.string(),
   });
 };
+
+export const IdUserValidation = () => z.string();

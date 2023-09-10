@@ -11,7 +11,7 @@ const AppDataSource = new DataSource({
   logging: true,
   synchronize: false,
   migrationsRun: false,
-  // migrations: ["src/tools/db/migration/*.ts"],
+  migrations: ["src/tools/db/migration/*.ts"],
   migrationsTableName: "history",
 });
 

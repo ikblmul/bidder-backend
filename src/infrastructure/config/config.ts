@@ -16,6 +16,8 @@ const config = {
     filters_console: [ResultType.SUCCESS], // filter when debug on then console start to debug specific status
   },
   salt: process.env.HASH_SALT || "poiajsoidaloisfhnosenfoinhsoif",
+  secretSign: process.env.SECRET_SIGN_KEY || "none",
+  tokenTime: process.env.TOKEN_EXPIRY_TIME || "1d",
 };
 
 export default config;

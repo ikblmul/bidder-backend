@@ -50,7 +50,6 @@ export interface UserRepository {
 // Usercases Contract
 export interface UserUsecase {
   getById(id: USER_ID): Promise<ResultData<UserOutput>>;
-  authtenicate(payload: Omit<UserInput, "fullname">): Promise<ResultData<UserOutput>>;
   getWithPaginate(
     payload: UserParamUsecase
   ): Promise<ResultData<PaginateResult<UserInputWithoutPass>>>;

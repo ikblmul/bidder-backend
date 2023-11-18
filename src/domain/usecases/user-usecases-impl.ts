@@ -16,6 +16,7 @@ import { userAuthenticateValidation } from "../validate/user-validate";
 import { makeHash, verifyHash } from "../helper/hash";
 import { UUID_ID } from "../interfaces/types";
 import zodErrorHandler from "../helper/zodError";
+import { utils } from "xlsx-js-style";
 
 class UserUsercasesImpl implements UserUsecase {
   constructor(public userRepository: UserRepository, public profileRepository: ProfileRepository) {}

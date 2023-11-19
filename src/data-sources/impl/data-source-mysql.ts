@@ -1,13 +1,13 @@
 import { DataSource } from "typeorm";
 import { SqlConnectionContract } from "../interfaces/sql-connection-contract";
 
-const CreateSqlConnection = ({
+const CreateSqlConnection = async ({
   db,
   host,
   password,
   port,
   username,
-}: SqlConnectionContract): DataSource => {
+}: SqlConnectionContract): Promise<DataSource> => {
   console.log(__dirname + "/../orm/typeorm/**/*.entity.{js,ts}");
   const AppDataSource = new DataSource({
     type: "mysql",
@@ -21,13 +21,12 @@ const CreateSqlConnection = ({
     entities: [__dirname + "/../orm/typeorm/*.{js,ts}"],
   });
 
-  AppDataSource.initialize()
-    .then(() => {
-      console.log("database connected...");
-    })
-    .catch((err) => {
-      console.error("Failed To Initialzed Database", err);
-    });
+  try {
+    await AppDataSource.initialize();
+    console.log("database connected...");
+  } catch (err) {
+    console.error("Failed To Initialzed Database", err);
+  }
 
   return AppDataSource;
 };

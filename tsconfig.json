@@ -14,9 +14,8 @@
         "experimentalDecorators" : true,
         "strict": true,
         "strictPropertyInitialization": false,
-        "emitDecoratorMetadata" : true,
+        "emitDecoratorMetadata" : true
     },
-
   "typeRoots": ["./global.d.ts", "./node_modules/@types"],
   "include": ["src/**/*", "src/bootstrap.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"],
@@ -38,6 +37,6 @@
         "strictPropertyInitialization": false,
         "emitDecoratorMetadata": true
     }
-  }, // add this
+  }
   }
   

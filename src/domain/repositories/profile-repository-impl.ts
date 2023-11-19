@@ -36,18 +36,19 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
     payload.keyOnly && (param.select = payload.keyOnly as FindOptionsSelect<Profile>);
 
-    return (await this.ormRepo.find(param)) as ProfileOutput[];
+    return (await this.ormRepo.find(param)) as unknown as ProfileOutput[];
   }
 
-  async getById(id: string): Promise<ProfileOutput | null> {
+  async getById(id: PROFILE_ID): Promise<ProfileOutput | null> {
     return (await this.ormRepo.findOne({
       where: {
         id,
+        // id,
       },
-    })) as ProfileOutput;
+    })) as unknown as ProfileOutput;
   }
 
-  async updateById(id: string, profile: Partial<ProfileInput>): Promise<boolean> {
+  async updateById(id: PROFILE_ID, profile: Partial<ProfileInput>): Promise<boolean> {
     const update = await this.ormRepo.update({ id }, profile);
     return update?.affected === 1;
   }

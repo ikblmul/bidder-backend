@@ -2,7 +2,7 @@ import { ResultType } from "../../domain/interfaces/types";
 
 const config = {
   app: {
-    port: process.env.APP_PORT,
+    port: (process.env.APP_PORT as number) || 3000,
   },
   database: {
     username: process.env.DB_USER,

@@ -12,7 +12,7 @@ import { UserUsecase } from "../interfaces/dao/user";
 import { MessageString, PaginateResult, ResultData } from "../interfaces/dao/helper";
 import { userValdation } from "../validate/user-validate";
 import paginateHelper from "../helper/paginate";
-import { userAuthenticateValidation } from "../validate/user-validate";
+// import { userAuthenticateValidation } from "../validate/user-validate";
 import { makeHash, verifyHash } from "../helper/hash";
 import { UUID_ID } from "../interfaces/types";
 import zodErrorHandler from "../helper/zodError";
@@ -21,21 +21,21 @@ import { utils } from "xlsx-js-style";
 class UserUsercasesImpl implements UserUsecase {
   constructor(public userRepository: UserRepository, public profileRepository: ProfileRepository) {}
 
-  async authtenicate(payload: Omit<UserInput, "fullname">): Promise<ResultData<UserOutput>> {
-    const validation = userAuthenticateValidation().safeParse(payload);
+  // async authtenicate(payload: Omit<UserInput, "fullname">): Promise<ResultData<UserOutput>> {
+  //   const validation = userAuthenticateValidation().safeParse(payload);
 
-    if (!validation.success) return validateResult(zodErrorHandler(validation.error));
+  //   if (!validation.success) return validateResult(zodErrorHandler(validation.error));
 
-    const user = await this.userRepository.getByUsername(validation.data.username);
+  //   const user = await this.userRepository.getByUsername(validation.data.username);
 
-    // check if username not Exists
-    if (!user) return validateResult("Username Not Found");
+  //   // check if username not Exists
+  //   if (!user) return validateResult("Username Not Found");
 
-    if (!(await verifyHash(user.password, payload.password)))
-      return validateResult("password doesn't match");
+  //   if (!(await verifyHash(user.password, payload.password)))
+  //     return validateResult("password doesn't match");
 
-    return successResult(user as UserOutput);
-  }
+  //   return successResult(user as UserOutput);
+  // }
 
   async create(payload: UserInput): Promise<ResultData<UserOutput>> {
     const validation = userValdation().safeParse(payload);

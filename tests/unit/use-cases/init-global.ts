@@ -1,6 +1,6 @@
 import CreateSqlConnection from "../../../src/data-sources/impl/data-source-mysql";
 
-export const InitDB = () => {
+export const InitDB = async () => {
   return CreateSqlConnection({
     db: process.env.DB_NAME as string,
     username: process.env.DB_USERNAME as string,

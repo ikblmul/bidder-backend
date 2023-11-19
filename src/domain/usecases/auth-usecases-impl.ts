@@ -1,3 +1,4 @@
+import { localValidation } from "./../validate/auth-validate";
 import {
   AuthType,
   AuthUsecase,
@@ -7,7 +8,12 @@ import {
   AuthorizationOutput,
 } from "../interfaces/dao/auth";
 import { ProfileRepository } from "../interfaces/dao/profile";
-import { successResult, errorResult, validateResult } from "../helper/result-data-helper";
+import {
+  successResult,
+  errorResult,
+  validateResult,
+  resultData,
+} from "../helper/result-data-helper";
 import { makeHash, verifyHash } from "../helper/hash";
 import { ResultType, UUID_ID } from "../interfaces/types";
 import zodErrorHandler from "../helper/zodError";
@@ -42,6 +48,10 @@ class AuthUsecaseImpl implements AuthUsecase {
     return await this.generateToken(userInfo.message as UserOutput);
   }
 
+  async authorization(payload: AuthenticationInput): PromiseData<string> {
+    return errorResult("not implemented");
+  }
+
   async getUserToken(token: string) {
     this.validateToken(token);
   }
@@ -69,9 +79,7 @@ class AuthUsecaseImpl implements AuthUsecase {
     }
   }
 
-  private async authLocal(
-    payload: z.infer<typeof AuthenticateValidation.local>
-  ): PromiseData<UserOutput> {
+  private async authLocal(payload: z.infer<typeof localValidation>): PromiseData<UserOutput> {
     const user = await this.userRepository.getByUsername(payload.username);
 
     // check if username not Exists
@@ -82,7 +90,9 @@ class AuthUsecaseImpl implements AuthUsecase {
 
     return successResult(user as UserOutput);
   }
-  private async authGoogle(payload: AuthenticationInput): PromiseData<UserOutput> {}
+  private async authGoogle(payload: AuthenticationInput): PromiseData<UserOutput> {
+    return errorResult("not implemented");
+  }
 }
 
-export default UserUsercasesImpl;
+export default AuthUsecaseImpl;

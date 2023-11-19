@@ -10,11 +10,18 @@ import UserController from "./infrastructure/adapter/controller/user-controller"
 import ProfileRepositoryImpl from "./domain/repositories/profile-repository-impl";
 
 interface InputBootstrap {
-  sqlDatasource: DataSource;
   appExpress: Express;
+  port: number;
 }
 
-const bootstrap = ({ appExpress, sqlDatasource }: InputBootstrap) => {
+const bootstrap = async ({ appExpress, port }: InputBootstrap) => {
+  const sqlDatasource = await CreateSqlConnection({
+    db: config.database.name,
+    username: config.database.username as string,
+    password: config.database.password as string,
+    host: config.database.host,
+    port: config.database.port,
+  });
   // setup repositories
   const userRepository = new UserRepositoryImpl(sqlDatasource);
   const profileRepository = new ProfileRepositoryImpl(sqlDatasource);
@@ -30,6 +37,10 @@ const bootstrap = ({ appExpress, sqlDatasource }: InputBootstrap) => {
 
   // setup routes
   express(appExpress, controllers);
+
+  appExpress.listen(port, () => {
+    console.log(`Listening on port ${port}`);
+  });
 };
 
 export default bootstrap;

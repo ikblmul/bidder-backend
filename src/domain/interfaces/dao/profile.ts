@@ -9,7 +9,7 @@ import {
 } from "./helper";
 import { USER_ID } from "./user";
 
-export type PROFILE_ID = UUID_ID;
+export type PROFILE_ID = number;
 
 export interface ProfileOutput {
   id: PROFILE_ID;

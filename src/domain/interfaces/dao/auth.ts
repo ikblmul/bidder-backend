@@ -1,4 +1,3 @@
-import { AuthenticationInput } from "./auth";
 import { PromiseData } from "./helper";
 
 // define for type validation checking and for input type interface

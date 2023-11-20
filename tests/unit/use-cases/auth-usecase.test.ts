@@ -1,4 +1,4 @@
-import { AuthUsecase } from "../../../src/domain/interfaces/dao/auth";
+import { AuthType, AuthUsecase } from "../../../src/domain/interfaces/dao/auth";
 import { DataSource } from "typeorm";
 import { InitDB } from "./init-global";
 import { UserOutput, UserRepository, UserUsecase } from "../../../src/domain/interfaces/dao/user";
@@ -7,6 +7,7 @@ import UserRepositoryImpl from "../../../src/domain/repositories/user-repository
 import AuthUsecaseImpl from "../../../src/domain/usecases/auth-usecases-impl";
 import ProfileRepositoryImpl from "../../../src/domain/repositories/profile-repository-impl";
 import UserUsecaseImpl from "../../../src/domain/usecases/user-usecases-impl";
+import { ResultType } from "../../../src/domain/interfaces/types";
 
 let connection: DataSource;
 let userRepository: UserRepository;
@@ -25,9 +26,9 @@ describe("Testing Authenticate", () => {
     // createing username password for test
     userCreated = (
       await userUsecase.create({
-        email: "test.jest@mail.com",
-        password: "awokawok",
-        username: "test.jest",
+        email: "test.jest1@mail.com",
+        password: "Password123@",
+        username: "test.jest1",
       })
     ).message as UserOutput;
 
@@ -35,12 +36,20 @@ describe("Testing Authenticate", () => {
   });
 
   afterAll(async () => {
-    userUsecase.deleteById(userCreated.id);
+    await userUsecase.deleteById(userCreated.id);
   });
 
-  test("Test Traditional Authentication", () => {});
+  test("Test Traditional Authentication", async () => {
+    const authResult = await authUsecase.authenticate({
+      authType: AuthType.Local,
+      username: "test.jest1",
+      password: "Password123@",
+    });
 
-  test("invalidate username and password", () => {});
+    expect(authResult).toMatchObject({ status: ResultType.SUCCESS });
+  });
 
-  test("checking token not valid", () => {});
+  // test("invalidate username and password", () => {});
+
+  // test("checking token not valid", () => {});
 });

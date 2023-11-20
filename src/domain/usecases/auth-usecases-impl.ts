@@ -45,6 +45,8 @@ class AuthUsecaseImpl implements AuthUsecase {
     // begin abstraction by authentication type why any cause abstracting data lol
     // return this.authByType(authType, validation.data as any);
 
+    console.log("from user info", userInfo);
+
     return await this.generateToken(userInfo.message as UserOutput);
   }
 
@@ -57,8 +59,9 @@ class AuthUsecaseImpl implements AuthUsecase {
   }
 
   private async generateToken(user: UserOutput): PromiseData<AuthenticationOutput> {
+    // console.log("from generateToken", typeof user, config.tokenTime);
     return successResult(
-      await jwt.sign(user, config.secretSign, {
+      await jwt.sign(JSON.parse(JSON.stringify(user)), config.secretSign, {
         expiresIn: config.tokenTime,
       })
     );

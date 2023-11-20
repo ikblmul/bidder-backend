@@ -17,7 +17,7 @@
         "emitDecoratorMetadata" : true
     },
   "typeRoots": ["./global.d.ts", "./node_modules/@types"],
-  "include": ["src/**/*", "src/bootstrap.ts"],
+  "include": ["src/**/*", "src/bootstrap.ts", "process-env.d.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"],
   "ts-node": {  
     "files": true, 

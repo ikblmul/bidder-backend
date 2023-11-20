@@ -15,5 +15,5 @@ const port = config.app.port || 8000;
 
 bootstrap({
   appExpress: app,
-  port,
+  port: port as number,
 });

@@ -2,6 +2,28 @@
     "configurations": [
         {
             "type": "node",
+            "name": "vscode-jest-tests.v2-1700455163086",
+            "request": "launch",
+            "args": [
+                "test",
+                "--",
+                "--runInBand",
+                "--watchAll=false",
+                "--testNamePattern",
+                "${jest.testNamePattern}",
+                "--runTestsByPath",
+                "${jest.testFile}",
+                "--config",
+                "tests/jest.config.ts"
+            ],
+            "cwd": "/Users/macbookairm1/Documents/project/bidder-node",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "disableOptimisticBPs": true,
+            "runtimeExecutable": "pnpm"
+        },
+        {
+            "type": "node",
             "name": "vscode-jest-tests.v2",
             "request": "launch",
             "args": [
